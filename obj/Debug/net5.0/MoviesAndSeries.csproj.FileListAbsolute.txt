@@ -1,0 +1,16 @@
+D:\dev\dio\MoviesAndSeries\bin\Debug\net5.0\MoviesAndSeries.exe
+D:\dev\dio\MoviesAndSeries\bin\Debug\net5.0\MoviesAndSeries.deps.json
+D:\dev\dio\MoviesAndSeries\bin\Debug\net5.0\MoviesAndSeries.runtimeconfig.json
+D:\dev\dio\MoviesAndSeries\bin\Debug\net5.0\MoviesAndSeries.runtimeconfig.dev.json
+D:\dev\dio\MoviesAndSeries\bin\Debug\net5.0\MoviesAndSeries.dll
+D:\dev\dio\MoviesAndSeries\bin\Debug\net5.0\ref\MoviesAndSeries.dll
+D:\dev\dio\MoviesAndSeries\bin\Debug\net5.0\MoviesAndSeries.pdb
+D:\dev\dio\MoviesAndSeries\obj\Debug\net5.0\MoviesAndSeries.csproj.AssemblyReference.cache
+D:\dev\dio\MoviesAndSeries\obj\Debug\net5.0\MoviesAndSeries.GeneratedMSBuildEditorConfig.editorconfig
+D:\dev\dio\MoviesAndSeries\obj\Debug\net5.0\MoviesAndSeries.AssemblyInfoInputs.cache
+D:\dev\dio\MoviesAndSeries\obj\Debug\net5.0\MoviesAndSeries.AssemblyInfo.cs
+D:\dev\dio\MoviesAndSeries\obj\Debug\net5.0\MoviesAndSeries.csproj.CoreCompileInputs.cache
+D:\dev\dio\MoviesAndSeries\obj\Debug\net5.0\MoviesAndSeries.dll
+D:\dev\dio\MoviesAndSeries\obj\Debug\net5.0\ref\MoviesAndSeries.dll
+D:\dev\dio\MoviesAndSeries\obj\Debug\net5.0\MoviesAndSeries.pdb
+D:\dev\dio\MoviesAndSeries\obj\Debug\net5.0\MoviesAndSeries.genruntimeconfig.cache

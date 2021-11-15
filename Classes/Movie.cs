@@ -1,4 +1,5 @@
 using System;
+using static System.Console;
 using MoviesAndSeries;
 
 namespace MoviesAndSeries
@@ -8,45 +9,52 @@ namespace MoviesAndSeries
     private string Title { get; set; }
     private int Year { get; set; }
     private Genre Genre { get; set; }
-    private string Situation { get; set; }
+    private string Duration { get; set; }
+    private bool Situation { get; set; }
 
-    public Movie(int id, string title, int year, Genre genre, string situation)
+    public Movie(int id, string title, int year, Genre genre, string duration)
     {
       this.ID = id;
       this.Title = title;
       this.Year = year;
       this.Genre = genre;
-      this.Situation = "Ativo";
+      this.Duration = duration;
+      this.Situation = false;
     }
 
-    public override string ToString()
-    {
-      string retorno = "";
-      retorno += "Título: " + Title + Environment.NewLine;
-      retorno += "Ano de Lançamento: " + Year + Environment.NewLine;
-      retorno += "Gênero: " + Genre + Environment.NewLine;
-      retorno += "Situação: " + Situation;
-      return retorno;
-    }
-
-    public string returnTitle()
-    {
-      return Title;
-    }
-
-    public int returnID()
+    public int getID()
     {
       return ID;
     }
 
-    public string returnSituation()
+    public string getTitle()
+    {
+      return Title;
+    }
+
+    public int getYear()
+    {
+      return Year;
+    }
+
+    public Genre getGenre()
+    {
+      return Genre;
+    }
+
+    public string getDuration()
+    {
+      return Duration;
+    }
+
+    public bool getSituation()
     {
       return Situation;
     }
 
     public void RemoveMovie()
     {
-      Situation = "Removido";
+      Situation = true;
     }
   }
 }
