@@ -2,9 +2,9 @@ namespace MoviesAndSeries
 {
   public class Serie : BaseEntity
   {
-    private string Season { get; set; }
+    private int Season { get; set; }
 
-    public Serie(int id, string title, int year, Genre genre, string season)
+    public Serie(int id, string title, int year, Genre genre, int season)
     {
       this.ID = id;
       this.Title = title;
@@ -14,7 +14,7 @@ namespace MoviesAndSeries
       this.Situation = false;
     }
 
-    public string getSeason()
+    public int getSeason()
     {
       return Season;
     }
