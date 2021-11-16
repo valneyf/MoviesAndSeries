@@ -29,7 +29,7 @@ namespace MoviesAndSeries
             DeleteMovie();
             break;
           case "5":
-            // ShowMovie();
+            ShowMovie();
             break;
           case "c":
             Clear();
@@ -128,6 +128,19 @@ namespace MoviesAndSeries
       repo.toDelete(indexMovie);
     }
 
+    private static void ShowMovie()
+    {
+      Write("Digite o id do filme que deseja visualizar: ");
+      int indexMovie = int.Parse(ReadLine());
+
+      var movie = repo.ReturnByID(indexMovie);
+
+      WriteLine("|{0,5} | {1,20} | {2,5} | {3,20} | {4,10} |  {5,10} |", "ID", "Título", "Ano", "Gênero", "Duração", "Situação");
+      WriteLine("|---------------------------------------------------------------------------------------|");
+
+      WriteLine("|{0,5} | {1,20} | {2,5} | {3,20} | {4,10} |  {5,10} |", movie.getID(), movie.getTitle(), movie.getYear(), movie.getGenre(), movie.getDuration(), (movie.getSituation() ? " Excluido" : " Ativo"));
+    }
+
     private static string userMenu()
     {
       WriteLine();
@@ -135,7 +148,7 @@ namespace MoviesAndSeries
       WriteLine("Informe a opção desejada:");
 
       WriteLine("1 - Listar filmes");
-      WriteLine("2 - Inserir nova filme");
+      WriteLine("2 - Inserir novo filme");
       WriteLine("3 - Atualizar filme");
       WriteLine("4 - Excluir filme");
       WriteLine("5 - Visualizar filme");
