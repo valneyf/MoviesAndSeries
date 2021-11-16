@@ -1,6 +1,5 @@
 ﻿using System;
 using MoviesAndSeries.Classes;
-// using MoviesAndSeries.Enums;
 using static System.Console;
 
 namespace MoviesAndSeries
@@ -24,7 +23,7 @@ namespace MoviesAndSeries
             InsertMovie();
             break;
           case "3":
-            // UpdateMovie();
+            UpdateMovie();
             break;
           case "4":
             // DeleteMovie();
@@ -94,7 +93,34 @@ namespace MoviesAndSeries
       repo.toInsert(userMovie);
     }
 
-    
+    private static void UpdateMovie()
+    {
+      Write("Digite o id do filme a ser atualizado: ");
+      int indexMovie = int.Parse(ReadLine());
+
+      foreach (int item in Enum.GetValues(typeof(Genre)))
+      {
+        WriteLine("{0}-{1}", item, Enum.GetName(typeof(Genre), item));
+      }
+
+      Write("Digite o gênero entre as opções acima: ");
+      int userGenre = int.Parse(ReadLine());
+
+      Write("Digite o título do filme: ");
+      string userTitle = ReadLine();
+
+      Write("Digite o ano de lançamento do filme: ");
+      int userYear = int.Parse(ReadLine());
+
+      Write("Digite a duração do filme: ");
+      string userDuration = ReadLine();
+
+      Movie updatedMovie = new Movie(indexMovie, userTitle, userYear, (Genre)userGenre, userDuration);
+
+      repo.toUpdate(indexMovie, updatedMovie);
+    }
+
+
 
     private static string userMenu()
     {
