@@ -23,7 +23,7 @@ namespace MoviesAndSeries.Classes
 
     public void toDelete(int id)
     {
-      listOfMovies[id].RemoveMovie();
+      listOfMovies[id].RemoveMedia();
     }
 
     public Movie ReturnByID(int id)
