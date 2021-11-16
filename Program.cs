@@ -101,6 +101,7 @@ namespace MoviesAndSeries
       switch (userMedia)
       {
         case 1:
+          WriteLine();
           WriteLine("Novo Filme");
 
           foreach (int item in Enum.GetValues(typeof(Genre)))
@@ -126,11 +127,10 @@ namespace MoviesAndSeries
 
           WriteLine($"Filme {movieTitle} cadastrado com sucesso!");
 
-          WriteLine();
-
           break;
 
         case 2:
+          WriteLine();
           WriteLine("Nova Série");
 
           foreach (int item in Enum.GetValues(typeof(Genre)))
@@ -150,13 +150,11 @@ namespace MoviesAndSeries
           Write("Digite o ano desta temporada da série: ");
           int serieYear = int.Parse(ReadLine());
 
-          Serie userSerie = new Serie(repoMovie.NextID(), serieTitle, serieYear, (Genre)serieGenre, serieSeason);
+          Serie userSerie = new Serie(repoSerie.NextID(), serieTitle, serieYear, (Genre)serieGenre, serieSeason);
 
           repoSerie.toInsert(userSerie);
 
           WriteLine($"Série {serieTitle} cadastrada com sucesso!");
-
-          WriteLine();
 
           break;
 
@@ -176,59 +174,75 @@ namespace MoviesAndSeries
       switch (userMedia)
       {
         case 1:
+          WriteLine();
           Write("Digite o id do filme a ser atualizado: ");
           int indexMovie = int.Parse(ReadLine());
+
+          Movie userMovie = repoMovie.ReturnByID(indexMovie);
 
           foreach (int item in Enum.GetValues(typeof(Genre)))
           {
             WriteLine("{0}-{1}", item, Enum.GetName(typeof(Genre), item));
           }
 
-          Write("Digite o gênero entre as opções acima: ");
-          int userGenre = int.Parse(ReadLine());
+          Write("Digite o gênero entre as opções acima (Atual: {0}): ", userMovie.getGenre());
+          string input = ReadLine();
+          int userGenre = input.Equals("") ? (int)userMovie.getGenre() : int.Parse(input);
 
-          Write("Digite o título do filme: ");
-          string userTitle = ReadLine();
+          Write("Digite o título do filme (Atual: {0}): ", userMovie.getTitle());
+          input = ReadLine();
+          string userTitle = input.Equals("") ? userMovie.getTitle() : input;
 
-          Write("Digite o ano de lançamento do filme: ");
-          int userYear = int.Parse(ReadLine());
+          Write("Digite o ano de lançamento do filme (Atual: {0}): ", userMovie.getYear());
+          input = ReadLine();
+          int userYear = input.Equals("") ? userMovie.getYear() : int.Parse(input);
 
-          Write("Digite a duração do filme: ");
-          string userDuration = ReadLine();
+          Write("Digite a duração do filme (Atual: {0}): ", userMovie.getDuration());
+          input = ReadLine();
+          string userDuration = input.Equals("") ? userMovie.getDuration() : ReadLine();
 
           Movie updatedMovie = new Movie(indexMovie, userTitle, userYear, (Genre)userGenre, userDuration);
 
           repoMovie.toUpdate(indexMovie, updatedMovie);
 
+          WriteLine();
           WriteLine($"Filme #{indexMovie} - {userTitle} atualizado");
 
           break;
 
         case 2:
+          WriteLine();
           Write("Digite o id do série a ser atualizado: ");
           int indexSerie = int.Parse(ReadLine());
+
+          Serie userSerie = repoSerie.ReturnByID(indexSerie);
 
           foreach (int item in Enum.GetValues(typeof(Genre)))
           {
             WriteLine("{0}-{1}", item, Enum.GetName(typeof(Genre), item));
           }
 
-          Write("Digite o gênero entre as opções acima: ");
-          int serieGenre = int.Parse(ReadLine());
+          Write("Digite o gênero entre as opções acima (Atual: {0}): ", userSerie.getGenre());
+          input = ReadLine();
+          int serieGenre = input.Equals("") ? (int)userSerie.getGenre() : int.Parse(input);
 
-          Write("Digite o título da série: ");
-          string serieTitle = ReadLine();
+          Write("Digite o título da série(Atual: {0}): ", userSerie.getTitle());
+          input = ReadLine();
+          string serieTitle = input.Equals("") ? userSerie.getTitle() : input;
 
-          Write("Digite qual a temporada da série(1, 2, 3): ");
-          int serieSeason = int.Parse(ReadLine());
+          Write("Digite qual a temporada da série(1, 2, 3) (Atual: {0}): ", userSerie.getSeason());
+          input = ReadLine();
+          int serieSeason = input.Equals("") ? userSerie.getSeason() : int.Parse(input);
 
-          Write("Digite o ano desta temporada da série: ");
-          int serieYear = int.Parse(ReadLine());
+          Write("Digite o ano desta temporada da série (Atual: {0}): ", userSerie.getYear());
+          input = ReadLine();
+          int serieYear = input.Equals("") ? userSerie.getYear() : int.Parse(input);
 
           Serie updatedSerie = new Serie(indexSerie, serieTitle, serieYear, (Genre)serieGenre, serieSeason);
 
           repoSerie.toUpdate(indexSerie, updatedSerie);
 
+          WriteLine();
           WriteLine($"Série #{indexSerie} - {serieTitle} atualizado");
 
           break;
@@ -248,6 +262,7 @@ namespace MoviesAndSeries
       switch (userMedia)
       {
         case 1:
+          WriteLine();
           Write("Digite o id do FILME a ser excluído: ");
           int indexMovie = int.Parse(ReadLine());
 
@@ -257,6 +272,7 @@ namespace MoviesAndSeries
           break;
 
         case 2:
+          WriteLine();
           Write("Digite o id da SÉRIE a ser excluída: ");
           int indexSerie = int.Parse(ReadLine());
 
@@ -281,6 +297,7 @@ namespace MoviesAndSeries
       switch (userMedia)
       {
         case 1:
+          WriteLine();
           Write("Digite o id do filme que deseja visualizar: ");
           int indexMovie = int.Parse(ReadLine());
 
@@ -294,13 +311,14 @@ namespace MoviesAndSeries
           break;
 
         case 2:
+          WriteLine();
           Write("Digite o id da série que deseja visualizar: ");
           int indexSerie = int.Parse(ReadLine());
 
           var serie = repoSerie.ReturnByID(indexSerie);
 
           WriteLine("|{0,5} | {1,20} | {2,5} | {3,20} | {4,10} |  {5,10} |", "ID", "Título", "Ano", "Gênero", "Temporada", "Situação");
-        WriteLine("|---------------------------------------------------------------------------------------|");
+          WriteLine("|---------------------------------------------------------------------------------------|");
 
           WriteLine("|{0,5} | {1,20} | {2,5} | {3,20} | {4,10} |  {5,10} |", serie.getID(), serie.getTitle(), serie.getYear(), serie.getGenre(), serie.getSeason(), (serie.getSituation() ? " Excluída" : " Ativa"));
 
