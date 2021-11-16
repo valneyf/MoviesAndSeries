@@ -26,7 +26,7 @@ namespace MoviesAndSeries
             UpdateMovie();
             break;
           case "4":
-            // DeleteMovie();
+            DeleteMovie();
             break;
           case "5":
             // ShowMovie();
@@ -120,7 +120,13 @@ namespace MoviesAndSeries
       repo.toUpdate(indexMovie, updatedMovie);
     }
 
+    private static void DeleteMovie()
+    {
+      Write("Digite o id do filme a ser excluído: ");
+      int indexMovie = int.Parse(ReadLine());
 
+      repo.toDelete(indexMovie);
+    }
 
     private static string userMenu()
     {
