@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "D:\\dev\\dio\\MoviesAndSeries\\MoviesAndSeries.csproj": {}
+    "E:\\MoviesAndSeries\\MoviesAndSeries.csproj": {}
   },
   "projects": {
-    "D:\\dev\\dio\\MoviesAndSeries\\MoviesAndSeries.csproj": {
+    "E:\\MoviesAndSeries\\MoviesAndSeries.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\dev\\dio\\MoviesAndSeries\\MoviesAndSeries.csproj",
+        "projectUniqueName": "E:\\MoviesAndSeries\\MoviesAndSeries.csproj",
         "projectName": "MoviesAndSeries",
-        "projectPath": "D:\\dev\\dio\\MoviesAndSeries\\MoviesAndSeries.csproj",
+        "projectPath": "E:\\MoviesAndSeries\\MoviesAndSeries.csproj",
         "packagesPath": "C:\\Users\\Valney Filho\\.nuget\\packages\\",
-        "outputPath": "D:\\dev\\dio\\MoviesAndSeries\\obj\\",
+        "outputPath": "E:\\MoviesAndSeries\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\Valney Filho\\AppData\\Roaming\\NuGet\\NuGet.Config"
@@ -37,6 +37,12 @@
       "frameworks": {
         "net5.0": {
           "targetAlias": "net5.0",
+          "dependencies": {
+            "Spectre.Console": {
+              "target": "Package",
+              "version": "[0.42.0, )"
+            }
+          },
           "imports": [
             "net461",
             "net462",

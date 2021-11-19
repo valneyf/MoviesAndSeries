@@ -2,6 +2,12 @@
 using MoviesAndSeries.Classes;
 using static System.Console;
 
+using Spectre.Console;
+using System.Numerics;
+using System.Runtime.InteropServices;
+using System.Collections.Generic;
+using System.IO.Ports;
+
 namespace MoviesAndSeries
 {
   class Program
@@ -11,29 +17,31 @@ namespace MoviesAndSeries
 
     static void Main(string[] args)
     {
+      Clear();
       string option = userMenu();
 
-      while (option.ToLower() != "x")
+      while (option != "Sair")
       {
+        Clear();
         switch (option)
         {
-          case "1":
+          // case "1":
+          case "Listar Mídias":
             ListMedia();
             break;
-          case "2":
+          // case "2":
+          case "Inserir Filme/Série":
             InsertMedia();
             break;
-          case "3":
+          // case "3":
+          case "Atualizar Filme/Série":
             UpdateMedia();
             break;
-          case "4":
+          case "Remover Filme/Série":
             DeleteMedia();
             break;
-          case "5":
+          case "Visualizar Filme/Série":
             ShowMedia();
-            break;
-          case "c":
-            Clear();
             break;
 
           default:
@@ -42,51 +50,55 @@ namespace MoviesAndSeries
         }
         option = userMenu();
       }
+      WriteLine();
+      WriteLine();
 
-      WriteLine("Obrigado por utilizar nossos serviços!");
+      var rule = new Rule("[bold green]Obrigado por utilizar nossos serviços![/]");
+      AnsiConsole.Write(rule);
       WriteLine();
     }
 
     private static void ListMedia()
     {
-      WriteLine("Listando filmes cadastrados");
+      Clear();
+      var rule1 = new Rule("[bold red]Filmes Cadastrados[/]");
+      AnsiConsole.Write(rule1);
+      WriteLine();
 
       var listMovies = repoMovie.toList();
 
+      var table1 = new Table();
+      table1.Centered();
+
       if (listMovies.Count == 0)
       {
-        WriteLine("Nenhum filme cadastrado.");
+        table1.AddColumn(new TableColumn("[yellow]Nenhum filme cadastrado.[/]").Centered());
+        AnsiConsole.Write(table1);
       }
       else
       {
-        WriteLine("|{0,5} | {1,20} | {2,5} | {3,20} | {4,10} |  {5,10} |", "ID", "Título", "Ano", "Gênero", "Duração", "Situação");
-        WriteLine("|---------------------------------------------------------------------------------------|");
-
-        foreach (var movie in listMovies)
-        {
-          WriteLine("|{0,5} | {1,20} | {2,5} | {3,20} | {4,10} |  {5,10} |", movie.getID(), movie.getTitle(), movie.getYear(), movie.getGenre(), movie.getDuration(), (movie.getSituation() ? " Excluído" : " Ativo"));
-        }
+        ViewAllMovies(listMovies, false);
       }
 
       WriteLine();
-      WriteLine("Listando séries cadastradas");
+
+      var rule2 = new Rule("[bold red]Séries Cadastradas[/]");
+      AnsiConsole.Write(rule2);
+      WriteLine();
 
       var listSeries = repoSerie.toList();
 
+      var table2 = new Table();
+      table2.Centered();
+
       if (listSeries.Count == 0)
       {
-        WriteLine("Nenhuma série cadastrada.");
+        table2.AddColumn(new TableColumn("[yellow]Nenhuma série cadastrada.[/]").Centered());
+        AnsiConsole.Write(table2);
       }
-
       else
       {
-        WriteLine("|{0,5} | {1,20} | {2,5} | {3,20} | {4,10} |  {5,10} |", "ID", "Título", "Ano", "Gênero", "Temporada", "Situação");
-        WriteLine("|---------------------------------------------------------------------------------------|");
-
-        foreach (var serie in listSeries)
-        {
-          WriteLine("|{0,5} | {1,20} | {2,5} | {3,20} | {4,10} |  {5,10} |", serie.getID(), serie.getTitle(), serie.getYear(), serie.getGenre(), serie.getSeason(), (serie.getSituation() ? " Excluída" : " Ativa"));
-        }
+        ViewAllSeries(listSeries, false);
       }
 
       return;
@@ -94,69 +106,94 @@ namespace MoviesAndSeries
 
     private static void InsertMedia()
     {
+      var tableInsert = new Table();
+      tableInsert.AddColumn("[bold yellow]Inserir Filme / Série[/]");
+      AnsiConsole.Write(tableInsert);
+
     Question:
-      Write("Digite 1 para inserir um FILME ou 2 para inserir uma SÉRIE: ");
+      WriteLine();
+      Write("Digite 1 para FILME ou 2 para SÉRIE: ");
       int userMedia = int.Parse(ReadLine());
 
       switch (userMedia)
       {
         case 1:
           WriteLine();
-          WriteLine("Novo Filme");
+          var rule = new Rule("[red]Novo Filme[/]");
+          rule.LeftAligned();
+          AnsiConsole.Write(rule);
 
-          foreach (int item in Enum.GetValues(typeof(Genre)))
+          string movieTitle = "";
+          try
           {
-            WriteLine("{0}-{1}", item, Enum.GetName(typeof(Genre), item));
+            var mediaGenre = chooseGenre();
+
+            WriteLine("Gênero escolhido: " + mediaGenre);
+            int movieGenre = (int)Enum.Parse(typeof(Genre), mediaGenre);
+
+            Write("Digite o título do filme: ");
+            movieTitle = ReadLine();
+
+            Write("Digite o ano de lançamento do filme: ");
+            int movieYear = int.Parse(ReadLine());
+
+            Write("Digite a duração do filme(Ex: 1h 25min): ");
+            string movieDuration = ReadLine();
+
+            Movie userMovie = new Movie(repoMovie.NextID(), movieTitle, movieYear, (Genre)movieGenre, movieDuration);
+
+            repoMovie.toInsert(userMovie);
+
+            WriteLine($"Filme {movieTitle} cadastrado com sucesso!");
+
+            break;
           }
+          catch (System.FormatException)
+          {
+            WriteLine("Foi informado valor não numérico para o campo Ano.");
+            WriteLine($"Filme {movieTitle} não será cadastrado.");
 
-          Write("Digite o número do gênero entre as opções acima: ");
-          int movieGenre = int.Parse(ReadLine());
-
-          Write("Digite o título do filme: ");
-          string movieTitle = ReadLine();
-
-          Write("Digite o ano de lançamento do filme: ");
-          int movieYear = int.Parse(ReadLine());
-
-          Write("Digite a duração do filme(Ex: 1h 25min): ");
-          string movieDuration = ReadLine();
-
-          Movie userMovie = new Movie(repoMovie.NextID(), movieTitle, movieYear, (Genre)movieGenre, movieDuration);
-
-          repoMovie.toInsert(userMovie);
-
-          WriteLine($"Filme {movieTitle} cadastrado com sucesso!");
-
-          break;
+            break;
+          }
 
         case 2:
           WriteLine();
-          WriteLine("Nova Série");
+          var rule2 = new Rule("[red]Nova Série[/]");
+          rule2.LeftAligned();
+          AnsiConsole.Write(rule2);
 
-          foreach (int item in Enum.GetValues(typeof(Genre)))
+          string serieTitle = "";
+          try
           {
-            WriteLine("{0}-{1}", item, Enum.GetName(typeof(Genre), item));
+            var mediaGenre = chooseGenre();
+
+            WriteLine("Gênero escolhido: " + mediaGenre);
+            int serieGenre = (int)Enum.Parse(typeof(Genre), mediaGenre);
+
+            Write("Digite o título da série: ");
+            serieTitle = ReadLine();
+
+            Write("Digite qual a temporada da série(1, 2, 3): ");
+            int serieSeason = int.Parse(ReadLine());
+
+            Write("Digite o ano desta temporada da série: ");
+            int serieYear = int.Parse(ReadLine());
+
+            Serie userSerie = new Serie(repoSerie.NextID(), serieTitle, serieYear, (Genre)serieGenre, serieSeason);
+
+            repoSerie.toInsert(userSerie);
+
+            WriteLine($"Série {serieTitle} cadastrada com sucesso!");
+
+            break;
           }
+          catch (System.FormatException)
+          {
+            WriteLine("Foi informado valor não numérico para o campo Temporada ou campo Ano.");
+            WriteLine($"Série {serieTitle} não será cadastrada.");
 
-          Write("Digite o número do gênero entre as opções acima: ");
-          int serieGenre = int.Parse(ReadLine());
-
-          Write("Digite o título da série: ");
-          string serieTitle = ReadLine();
-
-          Write("Digite qual a temporada da série(1, 2, 3): ");
-          int serieSeason = int.Parse(ReadLine());
-
-          Write("Digite o ano desta temporada da série: ");
-          int serieYear = int.Parse(ReadLine());
-
-          Serie userSerie = new Serie(repoSerie.NextID(), serieTitle, serieYear, (Genre)serieGenre, serieSeason);
-
-          repoSerie.toInsert(userSerie);
-
-          WriteLine($"Série {serieTitle} cadastrada com sucesso!");
-
-          break;
+            break;
+          }
 
         default:
           WriteLine("Escolha uma das alternativas indicadas.");
@@ -167,85 +204,178 @@ namespace MoviesAndSeries
 
     private static void UpdateMedia()
     {
+      Clear();
+      var tableUpdate = new Table();
+      tableUpdate.AddColumn("[bold yellow]Atualizar Filme / Série[/]");
+      AnsiConsole.Write(tableUpdate);
+
     Question:
-      Write("Digite 1 para atualizar um FILME ou 2 para atualizar uma SÉRIE: ");
+      Write("Digite 1 para FILME ou 2 para SÉRIE: ");
       int userMedia = int.Parse(ReadLine());
 
       switch (userMedia)
       {
         case 1:
           WriteLine();
-          Write("Digite o id do filme a ser atualizado: ");
-          int indexMovie = int.Parse(ReadLine());
-
-          Movie userMovie = repoMovie.ReturnByID(indexMovie);
-
-          foreach (int item in Enum.GetValues(typeof(Genre)))
-          {
-            WriteLine("{0}-{1}", item, Enum.GetName(typeof(Genre), item));
-          }
-
-          Write("Digite o gênero entre as opções acima (Atual: {0}): ", userMovie.getGenre());
-          string input = ReadLine();
-          int userGenre = input.Equals("") ? (int)userMovie.getGenre() : int.Parse(input);
-
-          Write("Digite o título do filme (Atual: {0}): ", userMovie.getTitle());
-          input = ReadLine();
-          string userTitle = input.Equals("") ? userMovie.getTitle() : input;
-
-          Write("Digite o ano de lançamento do filme (Atual: {0}): ", userMovie.getYear());
-          input = ReadLine();
-          int userYear = input.Equals("") ? userMovie.getYear() : int.Parse(input);
-
-          Write("Digite a duração do filme (Atual: {0}): ", userMovie.getDuration());
-          input = ReadLine();
-          string userDuration = input.Equals("") ? userMovie.getDuration() : ReadLine();
-
-          Movie updatedMovie = new Movie(indexMovie, userTitle, userYear, (Genre)userGenre, userDuration);
-
-          repoMovie.toUpdate(indexMovie, updatedMovie);
+          var rule = new Rule("[red]Atualizar Filme[/]");
+          rule.LeftAligned();
+          AnsiConsole.Write(rule);
 
           WriteLine();
-          WriteLine($"Filme #{indexMovie} - {userTitle} atualizado");
+          var listMovies = repoMovie.toList();
 
-          break;
+          if (listMovies.Count == 0)
+          {
+            var table1 = new Table();
+            table1.Centered();
+            table1.AddColumn(new TableColumn("[yellow]Nenhum filme cadastrado.[/]").Centered());
+            AnsiConsole.Write(table1);
+
+            WriteLine();
+            WriteLine("Pressione qualquer tecla para voltar ao menu principal.");
+            ReadKey();
+
+            Clear();
+            break;
+          }
+          else
+          {
+            ViewAllMovies(listMovies, false);
+          }
+
+          string input = "";
+
+          try
+          {
+            WriteLine();
+            AnsiConsole.Write(new Markup("Digite o [bold yellow]ID[/] do filme a ser atualizado: "));
+            int indexMovie = int.Parse(ReadLine());
+
+            Movie userMovie = repoMovie.ReturnByID(indexMovie);
+
+            var mediaGenre = chooseGenre();
+
+            WriteLine("Gênero escolhido: " + mediaGenre);
+            int userGenre = (int)Enum.Parse(typeof(Genre), mediaGenre);
+
+            Write("Digite o título do filme (Atual: {0}): ", userMovie.getTitle());
+            input = ReadLine();
+            string userTitle = input.Equals("") ? userMovie.getTitle() : input;
+
+            Write("Digite o ano de lançamento do filme (Atual: {0}): ", userMovie.getYear());
+            input = ReadLine();
+            int userYear = input.Equals("") ? userMovie.getYear() : int.Parse(input);
+
+            Write("Digite a duração do filme (Atual: {0}): ", userMovie.getDuration());
+            input = ReadLine();
+            string userDuration = input.Equals("") ? userMovie.getDuration() : ReadLine();
+
+            Movie updatedMovie = new Movie(indexMovie, userTitle, userYear, (Genre)userGenre, userDuration);
+
+            repoMovie.toUpdate(indexMovie, updatedMovie);
+
+            WriteLine();
+            WriteLine($"Filme #{indexMovie} - {userTitle} atualizado");
+
+            break;
+          }
+          catch (System.FormatException)
+          {
+
+            WriteLine("Foi informado um valor não numérico para o campo Ano.");
+            WriteLine($"A atualização será cancelada.");
+
+            break;
+          }
+          catch (System.ArgumentOutOfRangeException)
+          {
+
+            WriteLine("Foi informado uma ID não cadastrada.");
+            WriteLine($"A atualização será cancelada.");
+
+            break;
+          }
 
         case 2:
           WriteLine();
-          Write("Digite o id do série a ser atualizado: ");
-          int indexSerie = int.Parse(ReadLine());
-
-          Serie userSerie = repoSerie.ReturnByID(indexSerie);
-
-          foreach (int item in Enum.GetValues(typeof(Genre)))
-          {
-            WriteLine("{0}-{1}", item, Enum.GetName(typeof(Genre), item));
-          }
-
-          Write("Digite o gênero entre as opções acima (Atual: {0}): ", userSerie.getGenre());
-          input = ReadLine();
-          int serieGenre = input.Equals("") ? (int)userSerie.getGenre() : int.Parse(input);
-
-          Write("Digite o título da série(Atual: {0}): ", userSerie.getTitle());
-          input = ReadLine();
-          string serieTitle = input.Equals("") ? userSerie.getTitle() : input;
-
-          Write("Digite qual a temporada da série(1, 2, 3) (Atual: {0}): ", userSerie.getSeason());
-          input = ReadLine();
-          int serieSeason = input.Equals("") ? userSerie.getSeason() : int.Parse(input);
-
-          Write("Digite o ano desta temporada da série (Atual: {0}): ", userSerie.getYear());
-          input = ReadLine();
-          int serieYear = input.Equals("") ? userSerie.getYear() : int.Parse(input);
-
-          Serie updatedSerie = new Serie(indexSerie, serieTitle, serieYear, (Genre)serieGenre, serieSeason);
-
-          repoSerie.toUpdate(indexSerie, updatedSerie);
+          var rule2 = new Rule("[red]Atualizar Série[/]");
+          rule2.LeftAligned();
+          AnsiConsole.Write(rule2);
 
           WriteLine();
-          WriteLine($"Série #{indexSerie} - {serieTitle} atualizado");
+          var listSeries = repoSerie.toList();
 
-          break;
+          if (listSeries.Count == 0)
+          {
+            var table2 = new Table();
+            table2.Centered();
+            table2.AddColumn(new TableColumn("[yellow]Nenhuma série cadastrada.[/]").Centered());
+            AnsiConsole.Write(table2);
+
+            WriteLine();
+            WriteLine("Pressione qualquer tecla para voltar ao menu principal.");
+            ReadKey();
+
+            Clear();
+            break;
+          }
+          else
+          {
+            ViewAllSeries(listSeries, false);
+          }
+
+          try
+          {
+            WriteLine();
+            AnsiConsole.Write(new Markup("Digite o [bold yellow]ID[/] da série a ser atualizada: "));
+
+            int indexSerie = int.Parse(ReadLine());
+
+            Serie userSerie = repoSerie.ReturnByID(indexSerie);
+
+            var mediaGenre = chooseGenre();
+
+            WriteLine("Gênero escolhido: " + mediaGenre);
+            int serieGenre = (int)Enum.Parse(typeof(Genre), mediaGenre);
+
+            Write("Digite o título da série(Atual: {0}): ", userSerie.getTitle());
+            input = ReadLine();
+            string serieTitle = input.Equals("") ? userSerie.getTitle() : input;
+
+            Write("Digite qual a temporada da série(1, 2, 3) (Atual: {0}): ", userSerie.getSeason());
+            input = ReadLine();
+            int serieSeason = input.Equals("") ? userSerie.getSeason() : int.Parse(input);
+
+            Write("Digite o ano desta temporada da série (Atual: {0}): ", userSerie.getYear());
+            input = ReadLine();
+            int serieYear = input.Equals("") ? userSerie.getYear() : int.Parse(input);
+
+            Serie updatedSerie = new Serie(indexSerie, serieTitle, serieYear, (Genre)serieGenre, serieSeason);
+
+            repoSerie.toUpdate(indexSerie, updatedSerie);
+
+            WriteLine();
+            WriteLine($"Série #{indexSerie} - {serieTitle} atualizada");
+
+            break;
+          }
+          catch (System.FormatException)
+          {
+
+            WriteLine("Foi informado um valor não numérico para o campo Temporada ou campo Ano.");
+            WriteLine($"A atualização será cancelada.");
+
+            break;
+          }
+          catch (System.ArgumentOutOfRangeException)
+          {
+
+            WriteLine("Foi informado uma ID não cadastrada.");
+            WriteLine($"A atualização será cancelada.");
+
+            break;
+          }
+
         default:
           WriteLine("Escolha uma das alternativas indicadas.");
           WriteLine();
@@ -255,32 +385,111 @@ namespace MoviesAndSeries
 
     private static void DeleteMedia()
     {
+      Clear();
+      var tableDelete = new Table();
+      tableDelete.AddColumn("[bold yellow]Remover Filme / Série[/]");
+      AnsiConsole.Write(tableDelete);
+
     Question:
-      Write("Digite 1 para DELETAR um FILME ou 2 para DELETAR uma SÉRIE: ");
+      Write("Digite 1 para FILME ou 2 para SÉRIE: ");
       int userMedia = int.Parse(ReadLine());
 
       switch (userMedia)
       {
         case 1:
           WriteLine();
-          Write("Digite o id do FILME a ser excluído: ");
-          int indexMovie = int.Parse(ReadLine());
+          var rule = new Rule("[red]Remover Filme[/]");
+          rule.LeftAligned();
+          AnsiConsole.Write(rule);
 
-          repoMovie.toDelete(indexMovie);
-          WriteLine("Filme excluído.");
+          WriteLine();
+          var listMovies = repoMovie.toList();
 
-          break;
+          if (listMovies.Count == 0)
+          {
+            var table1 = new Table();
+            table1.Centered();
+            table1.AddColumn(new TableColumn("[yellow]Nenhum filme cadastrado.[/]").Centered());
+            AnsiConsole.Write(table1);
+
+            WriteLine();
+            WriteLine("Pressione qualquer tecla para voltar ao menu principal.");
+            ReadKey();
+
+            Clear();
+            break;
+          }
+          else
+          {
+            ViewAllMovies(listMovies, false);
+          }
+
+          try
+          {
+            WriteLine();
+            AnsiConsole.Write(new Markup("Digite o [bold red]ID[/] do FILME a ser removido: "));
+            int indexMovie = int.Parse(ReadLine());
+
+            repoMovie.toDelete(indexMovie);
+            WriteLine("Filme removido.");
+
+            break;
+          }
+          catch (System.ArgumentOutOfRangeException)
+          {
+
+            WriteLine("Foi informado uma ID não cadastrada.");
+            WriteLine($"A remoção será cancelada.");
+
+            break;
+          }
 
         case 2:
+          var rule2 = new Rule("[red]Remover Filme[/]");
+          rule2.LeftAligned();
+          AnsiConsole.Write(rule2);
+
           WriteLine();
-          Write("Digite o id da SÉRIE a ser excluída: ");
-          int indexSerie = int.Parse(ReadLine());
+          var listSeries = repoSerie.toList();
 
-          repoSerie.toDelete(indexSerie);
-          WriteLine("Série excluído.");
+          if (listSeries.Count == 0)
+          {
+            var table2 = new Table();
+            table2.Centered();
+            table2.AddColumn(new TableColumn("[yellow]Nenhuma série cadastrada.[/]").Centered());
+            AnsiConsole.Write(table2);
 
-          break;
+            WriteLine();
+            WriteLine("Pressione qualquer tecla para voltar ao menu principal.");
+            ReadKey();
 
+            Clear();
+            break;
+          }
+          else
+          {
+            ViewAllSeries(listSeries, false);
+          }
+
+          try
+          {
+            WriteLine();
+            AnsiConsole.Write(new Markup("Digite o [bold red]ID[/] da SÉRIE a ser removida: "));
+            int indexSerie = int.Parse(ReadLine());
+
+            repoSerie.toDelete(indexSerie);
+            WriteLine("Série removida.");
+
+            break;
+          }
+          catch (System.ArgumentOutOfRangeException)
+          {
+
+            WriteLine("Foi informado uma ID não cadastrada.");
+            WriteLine($"A remoção será cancelada.");
+
+            break;
+          }
         default:
           WriteLine("Escolha uma das alternativas indicadas.");
           WriteLine();
@@ -290,39 +499,115 @@ namespace MoviesAndSeries
 
     private static void ShowMedia()
     {
+      Clear();
+      var tableShow = new Table();
+      tableShow.AddColumn("[bold yellow]Visualizar Filme / Série[/]");
+      AnsiConsole.Write(tableShow);
+
     Question:
-      Write("Digite 1 para visualizar um FILME ou 2 para visualizar uma SÉRIE: ");
+      Write("Digite 1 para FILME ou 2 para SÉRIE: ");
       int userMedia = int.Parse(ReadLine());
 
       switch (userMedia)
       {
         case 1:
           WriteLine();
-          Write("Digite o id do filme que deseja visualizar: ");
-          int indexMovie = int.Parse(ReadLine());
+          var rule = new Rule("[red]Visualizar Filme[/]");
+          rule.LeftAligned();
+          AnsiConsole.Write(rule);
 
-          var movie = repoMovie.ReturnByID(indexMovie);
+          WriteLine();
+          var listMovies = repoMovie.toList();
 
-          WriteLine("|{0,5} | {1,20} | {2,5} | {3,20} | {4,10} |  {5,10} |", "ID", "Título", "Ano", "Gênero", "Duração", "Situação");
-          WriteLine("|---------------------------------------------------------------------------------------|");
+          if (listMovies.Count == 0)
+          {
+            var table1 = new Table();
+            table1.Centered();
+            table1.AddColumn(new TableColumn("[yellow]Nenhum filme cadastrado.[/]").Centered());
+            AnsiConsole.Write(table1);
 
-          WriteLine("|{0,5} | {1,20} | {2,5} | {3,20} | {4,10} |  {5,10} |", movie.getID(), movie.getTitle(), movie.getYear(), movie.getGenre(), movie.getDuration(), (movie.getSituation() ? " Excluido" : " Ativo"));
+            WriteLine();
+            WriteLine("Pressione qualquer tecla para voltar ao menu principal.");
+            ReadKey();
 
-          break;
+            Clear();
+            break;
+          }
+          else
+          {
+            ViewAllMovies(listMovies, true);
+          }
+
+          try
+          {
+            WriteLine();
+            AnsiConsole.Write(new Markup("Digite o [bold yellow]ID[/] do filme que deseja visualizar: "));
+
+            int indexMovie = int.Parse(ReadLine());
+
+            var movie = repoMovie.ReturnByID(indexMovie);
+            ViewMovie(movie);
+
+            break;
+          }
+          catch (System.ArgumentOutOfRangeException)
+          {
+
+            WriteLine("Foi informado uma ID não cadastrada.");
+            WriteLine($"Não será possível visualizar os detalhes de um FILME.");
+
+            break;
+          }
 
         case 2:
           WriteLine();
-          Write("Digite o id da série que deseja visualizar: ");
-          int indexSerie = int.Parse(ReadLine());
+          var rule2 = new Rule("[red]Visualizar Filme[/]");
+          rule2.LeftAligned();
+          AnsiConsole.Write(rule2);
 
-          var serie = repoSerie.ReturnByID(indexSerie);
+          WriteLine();
+          var listSeries = repoSerie.toList();
 
-          WriteLine("|{0,5} | {1,20} | {2,5} | {3,20} | {4,10} |  {5,10} |", "ID", "Título", "Ano", "Gênero", "Temporada", "Situação");
-          WriteLine("|---------------------------------------------------------------------------------------|");
+          if (listSeries.Count == 0)
+          {
+            var table2 = new Table();
+            table2.Centered();
+            table2.AddColumn(new TableColumn("[yellow]Nenhuma série cadastrada.[/]").Centered());
+            AnsiConsole.Write(table2);
 
-          WriteLine("|{0,5} | {1,20} | {2,5} | {3,20} | {4,10} |  {5,10} |", serie.getID(), serie.getTitle(), serie.getYear(), serie.getGenre(), serie.getSeason(), (serie.getSituation() ? " Excluída" : " Ativa"));
+            WriteLine();
+            WriteLine("Pressione qualquer tecla para voltar ao menu principal.");
+            ReadKey();
 
-          break;
+            Clear();
+            break;
+          }
+          else
+          {
+            ViewAllSeries(listSeries, true);
+          }
+
+          try
+          {
+            WriteLine();
+            AnsiConsole.Write(new Markup("Digite o [bold yellow]ID[/] da série que deseja visualizar: "));
+
+            int indexSerie = int.Parse(ReadLine());
+
+            var serie = repoSerie.ReturnByID(indexSerie);
+
+            ViewSerie(serie);
+
+            break;
+          }
+          catch (System.ArgumentOutOfRangeException)
+          {
+
+            WriteLine("Foi informado uma ID não cadastrada.");
+            WriteLine($"Não será possível visualizar os detalhes de uma SÉRIE.");
+
+            break;
+          }
 
         default:
           WriteLine("Escolha uma das alternativas indicadas.");
@@ -333,24 +618,151 @@ namespace MoviesAndSeries
 
     }
 
+    private static string chooseGenre()
+    {
+      string[] vector = new string[14];
+
+      foreach (int item in Enum.GetValues(typeof(Genre)))
+      {
+        vector[item] = Enum.GetName(typeof(Genre), item);
+      }
+
+      var choosenGenre = AnsiConsole.Prompt(
+          new SelectionPrompt<string>()
+              .Title("Escolha o [green]gênero[/]:")
+              .PageSize(10)
+              .MoreChoicesText("[grey](Mova para cima ou para baixo para mais opções)[/]")
+              .AddChoices(new[] {
+                    $"{vector[1]}", $"{vector[2]}", $"{vector[3]}", $"{vector[4]}", $"{vector[5]}",
+                    $"{vector[6]}", $"{vector[7]}", $"{vector[8]}", $"{vector[9]}", $"{vector[10]}",
+                    $"{vector[11]}", $"{vector[12]}", $"{vector[13]}",
+      }
+    ));
+
+      return choosenGenre;
+    }
+
+    private static void ViewMovie(Movie movie)
+    {
+      var table1 = new Table();
+      table1.Centered();
+      table1.AddColumn(new TableColumn("[bold yellow]ID[/]").Centered());
+      table1.AddColumn(new TableColumn("[bold yellow]Título[/]").Centered());
+      table1.AddColumn(new TableColumn("[bold yellow]Duração[/]").Centered());
+      table1.AddColumn(new TableColumn("[bold yellow]Ano[/]").Centered());
+      table1.AddColumn(new TableColumn("[bold yellow]Gênero[/]").Centered());
+      table1.AddColumn(new TableColumn("[bold yellow]Situação[/]").Centered());
+
+      table1.AddRow($"[yellow]{movie.getID()}[/]", $"[yellow]{movie.getTitle()}[/]", $"[yellow]{movie.getDuration()}[/]", $"[yellow]{movie.getYear()}[/]", $"[yellow]{movie.getGenre()}[/]", $"[yellow]{(movie.getSituation() ? "Removido" : "Ativo")}[/]");
+
+      AnsiConsole.Write(table1);
+    }
+
+    private static void ViewAllMovies(List<Movie> repository, bool resumed)
+    {
+      var table1 = new Table();
+      table1.Centered();
+
+      if (resumed)
+      {
+        table1.AddColumn(new TableColumn("[bold yellow]ID[/]").Centered());
+        table1.AddColumn(new TableColumn("[bold yellow]Título[/]").Centered());
+
+        foreach (var movie in repository)
+        {
+          table1.AddRow($"[yellow]{movie.getID()}[/]", $"[yellow]{movie.getTitle()}[/]");
+        }
+      }
+      else
+      {
+        table1.AddColumn(new TableColumn("[bold yellow]ID[/]").Centered());
+        table1.AddColumn(new TableColumn("[bold yellow]Título[/]").Centered());
+        table1.AddColumn(new TableColumn("[bold yellow]Duração[/]").Centered());
+        table1.AddColumn(new TableColumn("[bold yellow]Ano[/]").Centered());
+        table1.AddColumn(new TableColumn("[bold yellow]Gênero[/]").Centered());
+        table1.AddColumn(new TableColumn("[bold yellow]Situação[/]").Centered());
+
+        foreach (var movie in repository)
+        {
+          table1.AddRow($"[yellow]{movie.getID()}[/]", $"[yellow]{movie.getTitle()}[/]", $"[yellow]{movie.getDuration()}[/]", $"[yellow]{movie.getYear()}[/]", $"[yellow]{movie.getGenre()}[/]", $"[yellow]{(movie.getSituation() ? "Removido" : "Ativo")}[/]");
+        }
+      }
+
+      AnsiConsole.Write(table1);
+    }
+
+    private static void ViewSerie(Serie serie)
+    {
+      var table2 = new Table();
+      table2.Centered();
+      table2.AddColumn(new TableColumn("[bold yellow]ID[/]").Centered());
+      table2.AddColumn(new TableColumn("[bold yellow]Título[/]").Centered());
+      table2.AddColumn(new TableColumn("[bold yellow]Temporada[/]").Centered());
+      table2.AddColumn(new TableColumn("[bold yellow]Ano[/]").Centered());
+      table2.AddColumn(new TableColumn("[bold yellow]Gênero[/]").Centered());
+      table2.AddColumn(new TableColumn("[bold yellow]Situação[/]").Centered());
+
+      table2.AddRow($"[yellow]{serie.getID()}[/]", $"[yellow]{serie.getTitle()}[/]", $"[yellow]{serie.getSeason()}[/]", $"[yellow]{serie.getYear()}[/]", $"[yellow]{serie.getGenre()}[/]", $"[yellow]{(serie.getSituation() ? "Removida" : "Ativa")}[/]");
+
+      AnsiConsole.Write(table2);
+    }
+
+    private static void ViewAllSeries(List<Serie> repository, bool resumed)
+    {
+      var table2 = new Table();
+      table2.Centered();
+
+      if (resumed)
+      {
+        table2.AddColumn(new TableColumn("[bold yellow]ID[/]").Centered());
+        table2.AddColumn(new TableColumn("[bold yellow]Título[/]").Centered());
+
+        foreach (var serie in repository)
+        {
+          table2.AddRow($"[yellow]{serie.getID()}[/]", $"[yellow]{serie.getTitle()}[/]");
+        }
+      }
+      else
+      {
+        table2.AddColumn(new TableColumn("[bold yellow]ID[/]").Centered());
+        table2.AddColumn(new TableColumn("[bold yellow]Título[/]").Centered());
+        table2.AddColumn(new TableColumn("[bold yellow]Temporada[/]").Centered());
+        table2.AddColumn(new TableColumn("[bold yellow]Ano[/]").Centered());
+        table2.AddColumn(new TableColumn("[bold yellow]Gênero[/]").Centered());
+        table2.AddColumn(new TableColumn("[bold yellow]Situação[/]").Centered());
+
+        foreach (var serie in repository)
+        {
+          table2.AddRow($"[yellow]{serie.getID()}[/]", $"[yellow]{serie.getTitle()}[/]", $"[yellow]{serie.getSeason()}[/]", $"[yellow]{serie.getYear()}[/]", $"[yellow]{serie.getGenre()}[/]", $"[yellow]{(serie.getSituation() ? "Removida" : "Ativa")}[/]");
+        }
+      }
+
+      AnsiConsole.Write(table2);
+    }
+
     private static string userMenu()
     {
-      WriteLine();
-      WriteLine("Aplicativo de Filmes e Séries - TakeBlip");
-      WriteLine("Informe a opção desejada:");
+      var table = new Table();
+      table.Border(TableBorder.Rounded);
+      table.Expand();
+      table.AddColumn(new TableColumn("[bold green]Aplicativo de Filmes e Séries - TakeBlip[/]").Centered());
 
-      WriteLine("1 - Listar mídias");
-      WriteLine("2 - Inserir filme/série");
-      WriteLine("3 - Atualizar filme/série");
-      WriteLine("4 - Excluir filme/série");
-      WriteLine("5 - Visualizar filme/série");
-      WriteLine("C - Limpar Tela");
-      WriteLine("X - Sair");
-      WriteLine();
+      table.AddRow("[bold yellow]Menu[/]");
 
-      string option = ReadLine().ToLower();
-      WriteLine();
-      return option;
+      AnsiConsole.Write(table);
+
+      var choosenOption = AnsiConsole.Prompt(
+          new SelectionPrompt<string>()
+              .Title("[green]Escolha uma opção abaixo[/]:")
+              .PageSize(6)
+              .MoreChoicesText("[grey](Mova para cima ou para baixo para selecionar opção)[/]")
+              .AddChoices(new[] {
+                    "Listar Mídias", "Inserir Filme/Série", "Atualizar Filme/Série",
+                    "Remover Filme/Série", "Visualizar Filme/Série", "Sair",
+      }
+    ));
+
+      return choosenOption;
     }
   }
 }
