@@ -561,7 +561,7 @@ namespace MoviesAndSeries
 
         case 2:
           WriteLine();
-          var rule2 = new Rule("[red]Visualizar Filme[/]");
+          var rule2 = new Rule("[red]Visualizar Série[/]");
           rule2.LeftAligned();
           AnsiConsole.Write(rule2);
 

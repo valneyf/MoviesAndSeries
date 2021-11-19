@@ -33,3 +33,6 @@ E:\MoviesAndSeries\obj\Debug\net5.0\MoviesAndSeries.dll
 E:\MoviesAndSeries\obj\Debug\net5.0\ref\MoviesAndSeries.dll
 E:\MoviesAndSeries\obj\Debug\net5.0\MoviesAndSeries.pdb
 E:\MoviesAndSeries\obj\Debug\net5.0\MoviesAndSeries.genruntimeconfig.cache
+D:\dev\dio\MoviesAndSeries\bin\Debug\net5.0\Spectre.Console.dll
+D:\dev\dio\MoviesAndSeries\bin\Debug\net5.0\Wcwidth.dll
+D:\dev\dio\MoviesAndSeries\obj\Debug\net5.0\MoviesAndSeries.csproj.CopyComplete

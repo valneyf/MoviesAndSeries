@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "E:\\MoviesAndSeries\\MoviesAndSeries.csproj": {}
+    "D:\\dev\\dio\\MoviesAndSeries\\MoviesAndSeries.csproj": {}
   },
   "projects": {
-    "E:\\MoviesAndSeries\\MoviesAndSeries.csproj": {
+    "D:\\dev\\dio\\MoviesAndSeries\\MoviesAndSeries.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "E:\\MoviesAndSeries\\MoviesAndSeries.csproj",
+        "projectUniqueName": "D:\\dev\\dio\\MoviesAndSeries\\MoviesAndSeries.csproj",
         "projectName": "MoviesAndSeries",
-        "projectPath": "E:\\MoviesAndSeries\\MoviesAndSeries.csproj",
+        "projectPath": "D:\\dev\\dio\\MoviesAndSeries\\MoviesAndSeries.csproj",
         "packagesPath": "C:\\Users\\Valney Filho\\.nuget\\packages\\",
-        "outputPath": "E:\\MoviesAndSeries\\obj\\",
+        "outputPath": "D:\\dev\\dio\\MoviesAndSeries\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\Valney Filho\\AppData\\Roaming\\NuGet\\NuGet.Config"

@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "Nv95ia1zBEyZP9ioQuie4BeWMapw9qnvc7/PrsOgczxvmK01BmGpg78gcu7o8zNawSIHqW1X0I7R4F9LvSzDJw==",
+  "dgSpecHash": "F9JsEAyf5t2JlkN9Jhfu2UuRii3PPBWOXl80v+de2eJAKDKK5kLILsktXZiucPAe0cXrSD2nXq75usREULhZdg==",
   "success": true,
-  "projectFilePath": "E:\\MoviesAndSeries\\MoviesAndSeries.csproj",
+  "projectFilePath": "D:\\dev\\dio\\MoviesAndSeries\\MoviesAndSeries.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Valney Filho\\.nuget\\packages\\spectre.console\\0.42.0\\spectre.console.0.42.0.nupkg.sha512",
     "C:\\Users\\Valney Filho\\.nuget\\packages\\wcwidth\\0.2.0\\wcwidth.0.2.0.nupkg.sha512"
