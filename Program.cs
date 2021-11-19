@@ -268,7 +268,7 @@ namespace MoviesAndSeries
 
             Write("Digite a duração do filme (Atual: {0}): ", userMovie.getDuration());
             input = ReadLine();
-            string userDuration = input.Equals("") ? userMovie.getDuration() : ReadLine();
+            string userDuration = input.Equals("") ? userMovie.getDuration() : input;
 
             Movie updatedMovie = new Movie(indexMovie, userTitle, userYear, (Genre)userGenre, userDuration);
 
